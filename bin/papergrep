@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# pattern to search papers with pdfgrep
+# this relies on the jabref file nameing convetions of <authortag>YYYY[discriminator].pdf
+
+cd ~/projects/biblio/pdf/
+pdfgrep $@ *[12][019][0-9][0-9][a-z]*.pdf

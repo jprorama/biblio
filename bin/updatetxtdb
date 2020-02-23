@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# update the text db of the pdf files
+# run from the pdf directory
+
+for file in *[a-zA-z][0-9][0-9][0-9]?.pdf
+do
+ tag=`echo $file | cut -d. -f1`
+ if [ ! -f ../txt/$tag.txt ]
+ then
+    echo $tag.txt
+    pdftotext $file ../txt/$tag.txt
+ fi
+done

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# find paper topics in chronological order
+
+topic="$1"
+
+grep -li "$topic" * | sed -e 's/\([a-zA-Z]\)\([0-9]*\).txt/\1 \2/' | awk '{print $2 " " $1}' | sort -g
