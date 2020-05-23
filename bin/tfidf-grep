@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# return the tf-idf scores for documents in the search results
+# the raw term frequency from top-10-grep doesn't consider
+# popularity of terms in the corpus
+
+searchterm=$1
+
+# create and use dictionary for term frequency 
+# https://stackoverflow.com/a/3467959/8928529
+declare -A tf
+#declare -A idf
+
+hits=0
+N=0
+
+curifs=$IFS
+IFS=$'\n'
+for result in `top-10-grep "${searchterm}"`
+do
+	IFS=$curifs
+	freq=`echo $result | cut -d" " -f1`
+	doc=`echo $result | cut -d" " -f2`
+	tf["$doc"]=$freq
+	hits=`echo $hits + 1 | bc -l`	
+done
+
+# compute the size of the corpus
+for doc in `ls -1`
+do
+	N=`echo $N + 1 | bc -l`
+done
+
+# compute the inverse document frequency
+idf=`echo l\($N/$hits\) | bc -l`
+
+# stats to help understand the corpus and search term quality
+echo stats: hits: $hits, N: $N, idf: $idf
+
+# print the tf-idf rounded to 2 decimals
+# https://stackoverflow.com/a/26864946/8928529
+for doc in "${!tf[@]}"
+do
+	tfidf=`scale=3; echo ${tf["$doc"]} \* $idf | bc -l`
+        printf '%.2f %s\n' $tfidf $doc
+done | sort -rn	
