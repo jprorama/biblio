@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# implement the overlap score measure, Manning2008, p119.
+# 
+# compute tfidf of each query term and return the total score
+#
+# logically it treats each document as a vector with a weight
+# for each term in the dictionary.  The weight for that term 
+# is summed.
+# in this implemntation we compute the weight on the fly and 
+# not from a maintain vector represeation.
+
+curifs=$IFS
+
+# try to split string into array -- not working
+# https://www.tutorialkart.com/bash-shell-scripting/bash-split-string/
+IFS=' '
+read -ra query <<< "$@"
+IFS=$curifs
+
+declare -A scores
+
+# compute the score of each term and add them up
+#
+# use shift to step through arguments because the 
+# for loop kept treating all terms as a single string
+# https://www.computerhope.com/unix/bash/shift.htm
+while (( $# )) 
+do
+   term=$1
+   #echo processing: $term
+   IFS=$'\n'
+   for result in `tfidf-grep $term | tail -n +2`
+   do
+       IFS=$curifs
+       #echo $result
+       score=`echo $result | cut -d" " -f1`
+       doc=`echo $result | cut -d" " -f2`
+       if [ -z "${scores[$doc]}" ]
+       then
+          scores[$doc]=$score
+       else
+          scores[$doc]=`echo ${scores[$doc]} + $score | bc -l`
+       fi
+   done
+   shift
+done
+
+# print the overlap score measure
+for doc in ${!scores[@]}
+do
+   printf "%0.2f %s\n" ${scores[$doc]} $doc
+done | sort -rn 
+
