@@ -9,6 +9,12 @@
 # is summed.
 # in this implemntation we compute the weight on the fly and 
 # not from a maintain vector represeation.
+#
+# the implementation maintains efficiency by not treating the
+# query terms as a unit vector.
+#
+# in SMART terms the scoring implements ntb.nnn [Manning2008, 6.4.3]
+# by using tf-idf and normalizing by byte size of document.
 
 curifs=$IFS
 
@@ -47,8 +53,11 @@ do
 done
 
 # print the overlap score measure
+# and normalize by document size
 for doc in ${!scores[@]}
 do
-   printf "%0.2f %s\n" ${scores[$doc]} $doc
+   size=`stat -c %s $doc`
+   nscore=`echo ${scores[$doc]} / sqrt\($size\) | bc -l`
+   printf "%0.2f %s\n" $nscore $doc
 done | sort -rn 
 
