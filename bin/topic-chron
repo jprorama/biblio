@@ -4,4 +4,4 @@
 
 topic="$1"
 
-grep -li "$topic" * | sed -e 's/\([a-zA-Z]\)\([0-9][0-9][0-9][0-9][a-z]*\).txt/\1 \2/' | awk '{print $2 " " $1}' | sort -g
+grep -Pli "$topic" * | sed -e 's/\([a-zA-Z]\)\([0-9][0-9][0-9][0-9][a-z]*\).txt/\1 \2/' | awk '{print $2 " " $1}' | sort -g

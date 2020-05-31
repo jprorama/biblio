@@ -36,7 +36,7 @@ do
    term=$1
    #echo processing: $term
    IFS=$'\n'
-   for result in `tfidf-grep $term | tail -n +2`
+   for result in `tfidf-grep "$term" | tail -n +2`
    do
        IFS=$curifs
        #echo $result
