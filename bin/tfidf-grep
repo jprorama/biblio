@@ -32,7 +32,7 @@ do
 done
 
 # compute the inverse document frequency
-idf=`echo l\($N/$hits\) | bc -l`
+idf=`echo l\($N/\($hits+1\)\) | bc -l`
 
 # stats to help understand the corpus and search term quality
 echo stats: hits: $hits, N: $N, idf: $idf
