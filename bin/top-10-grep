@@ -1,0 +1,6 @@
+#!/bin/bash
+
+searchterm=$1
+
+# print sorted list of topic popularity for papers in the archive
+grep-chron "${searchterm}"  | awk -F: '{print $1}' | uniq -c | sort -nr

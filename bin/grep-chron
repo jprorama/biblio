@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# grep content of files in published date order
+
+searchterm="$1"
+
+for file in `../bin/topic-chron "$searchterm" | awk '{print $2$1".txt"}'`
+do
+ grep -PH --color "$searchterm" $file
+done
